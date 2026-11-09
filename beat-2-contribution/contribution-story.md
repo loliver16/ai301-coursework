@@ -8,9 +8,8 @@ format criteria grade exactly that. Your course repo link is the whole submissio
 files and no evidence uploads are part of Assignment 5.
 
 **Contribution Number:** [1]
-**Student:** [Student name]
-**GitHub Username:** [your GitHub username, exactly as it appears on your profile - no @, no
-profile URL. Your comments upstream are identified by this name.]
+**Student:** Lauren Oliver
+**GitHub Username:** loliver16
 **Issue:** [GitHub issue link]
 **Pull Request:** [GitHub PR link, once opened]
 
@@ -55,10 +54,9 @@ happened; these entries are the toolkit's own timeline.
 All four entries are graded. Keep every heading below, and fill each
 one in the week it belongs to.
 
-**Unit 5: [one line on the tool work]**
+**Unit 9: Turned issue-select into issue-scout, which searches GitHub with my own queries and grades the top five results.**
 
-[2-4 sentences: what you built (the scout, your strategy), what broke
-or fell short, what changed because of it.]
+I built issue-scout with the strategy of prioritizing my backend experience and interest by creating seven gh queries for Python and Java backend issues that use ranking filters to drop assigned, stale, and heavily discussed issues. My first scan showed that my maintainer check passed any repo whose owner had filed issues that day, even if the maintainer hadn't been actively responding to contributors and approving PR's, which is why I tightened it to require the repo have a commit, merged PR, or recent reply to someone else's issue. I tried adding an umbrella-issue rule to the scope check category to prevent issues with many subtasks from being accepted, since a newcomer can't realistically complete them in one PR. However, the resulting tests showed this change flipped good issues to reject so I removed this rule and left scopecheck as is, noting this limitation.
 
 **Unit 6: [one line on the tool work]**
 
