@@ -78,14 +78,14 @@ drafted, what you did with the draft.]
 
 I found my issue through the CodePath Issue Selection site, using the tags "good first issue," “Java,” and “Python.” It was hard to find a good one, because many I initially chose were already claimed, had open PRs, or had so much history that a newcomer couldn't add anything new. I narrowed it to two: ITK#796 (standardizing documentation in the Utilities scripts) and CTSM#1547 (adding an option that logs variable names before a history write). My scout accepted CTSM#1547 with an "ambitious" difficulty note, because the maintainers hadn't settled on a design, and rejected ITK#796 on scope-feasible, so it got no difficulty note. I favored the CTSM issue at first, but after reading its setup and other issues in the repo, I realized getting the climate model running on my computer would be a huge undertaking, and it didn't feel like a good first issue.
 
-I chose ITK#796 anyway, even though my scout rejected it. The verdict was about the issue as written, which asks to document every script in Utilities, but a maintainer's comment named three scripts as places to start. I narrowed my claim to one, UpdateRemoteModules.sh, and treated that as my override of the rubric. ITK isn't a perfect match for my interests, since it's C++ image analysis and this is documentation for bash scripts, but I decided to choose it anyways since the Insight Toolkit (ITK) is used for data processing and classification, which fits my data interest. Additionally, I felt this contribution could still be a good learning experience for me to familiarize myself with scripting and the structure of this application, while also learning proper documentation formats. The scout got the basics right, but it accepted an issue I couldn't realistically work on and rejected the one I chose, and it doesn't check issue age or whether I can build and run a project, so I had to read those myself (one of the suggested scripts named in 2019 has since been removed). My claim comment can be found here: https://github.com/InsightSoftwareConsortium/ITK/issues/796#issuecomment-6734822638
+I chose ITK#796 anyway, even though my scout rejected it. The verdict was about the issue as written, which asks to document every script in Utilities, but a maintainer's comment named three scripts as places to start. I narrowed my claim to one, UpdateRemoteModules.sh, and treated that as my override of the rubric. ITK isn't a perfect match for my interests, since it's C++ image analysis and this is documentation for bash scripts, but I decided to choose it anyways since the Insight Toolkit (ITK) is used for image analysis and data classification, which fits my data interest. Additionally, I felt this contribution could still be a good learning experience for me to familiarize myself with scripting and the structure of this application, while also learning proper documentation formats. The scout got the basics right, but it accepted an issue I couldn't realistically work on and rejected the one I chose, and it doesn't check issue age or whether I can build and run a project, so I had to read those myself (one of the suggested scripts named in 2019 has since been removed). My claim comment can be found here: https://github.com/InsightSoftwareConsortium/ITK/issues/796#issuecomment-6734822638
 
 **Toolkit**
 
 - Tool: issue-scout, run as `claude "issue-scout: grade <URL> <URL>"` on my two Issue Selection picks after patching the scope check.
 - What it produced: CTSM#1547 accepted with an "ambitious" difficulty note (the maintainers haven't settled the design). ITK#796 rejected on scope-feasible because the issue asks for documentation changes across every script in Utilities, so it got no difficulty note.
-- Difficulties: It rejected the issue I chose and accepted one I wouldn't pick, a Fortran climate model outside of my ability to fix due to needing a supercomputer The verdict was a judgment call on #796, since a maintainer had named three scripts as starting points. The rubric also doesn't check AI policy, issue age, or whether I can build and run the project, so I read those myself.
-- What changed: I replaced my strict scope check with the scope-feasible row and added the difficulty note section. I logged the #796 judgment call in scan-notes.md," if you did. I would add rows for AI policy and issue age.
+- Difficulties: It rejected the issue I chose and accepted one I wouldn't pick, a Fortran climate model outside of my ability because it requires a tedious setup process and more maintainer guidance before starting. The verdict was a judgment call on #796, since a maintainer had named three scripts as starting points. The rubric also doesn't check AI policy, issue age, or whether I can build and run the project, so I read those myself.
+- What changed: I replaced my strict scope check with the scope-feasible row and added the difficulty note section. I logged the #796 judgment call in scan-notes.md. I would add rows for AI policy and issue age.
 
 ---
 
@@ -93,26 +93,24 @@ I chose ITK#796 anyway, even though my scout rejected it. The verdict was about 
 
 **Problem Description**
 
-[In your own words, what is broken or missing?]
+Many scripts in `Utilities` and `Utilities/Maintenance` don't have proper documentation, so mostly maintainers and a few others know what they do and how to use them. The issue asks for the following standard documentation format for these scripts: a header comment and a `--help` message with NAME, SYNOPSIS, DESCRIPTION, OPTIONS, IMPLEMENTATION, EXAMPLES and SEE ALSO. I will start with `UpdateRemoteModules.sh`, one of the scripts suggested in the issue.
 
 **Expected Behavior**
-
-[What should happen?]
+The script's header comment and its `--help` output should both contain the seven sections, describe the `-ongreen` option, and say accurately what the script does, including that it edits `Modules/Remote/*.cmake` files in place. A new contributor could then understand the script without reading its code. My fix doesn't change how the script runs.
 
 **Current Behavior**
-
-[What actually happens?]
+Right now, the header comment (lines 22-26) is two sentences, and `usage()` (lines 30-41) prints those same sentences with a `Usage:` line, so `--help` shows one paragraph and none of the seven sections. `-ongreen` isn't documented anywhere, and the help text says the script updates modules "whose CI build status is successful," although that check only runs with `-ongreen`. Nothing warns that running the script without `--help` contacts GitHub over SSH and edits files in place.
 
 **Affected Components**
 
-[Which parts of the codebase are involved?]
+I will only make changes to the header comment and the text `usage()` that prints in `Utilities/Maintenance/UpdateRemoteModules.sh`. I'll read Release.md and `UpdateRequiredITKVersionInRemoteModules.sh` for context and style, but not change them.This PR changes no script behavior, touches no other script, and leaves out the Software Guide section and any rendering or automation, which the issue mentions as possibilities for the future. 
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: No tool was used for this section, but Claude chat was used to evaluate my descriptions
+- What it produced: A list of corrections, including a fix to the description clarifying the exact changes, " and Current Behavior to add for specificity (-ongreen undocumented, the help text's wrong default, no in-place edit warning).
+- Difficulties: No difficulties were encountered. All changes were made to provide more accuracy and detail. 
+- What changed: I made the Current and Expected Behavior sections specific, narrowed the "no code changes" claim to "no changes to how the script runs," and added the Software Guide and rendering work to my out-of-scope list.
 
 ---
 
@@ -129,7 +127,7 @@ I reproduced the issue on the following environment:
 - Package manager: none used (read-only steps, no build)
 
 Challenges:
-- **Running the script safely.** I first assumed that running `UpdateRemoteModules.sh` with `--help` or no arguments was safe. Reading the script showed that without `--help` it contacts GitHub over SSH and edits `Modules/Remote/*.cmake` in place. I ran it with `--help` only, and `git status --short` was empty before and after.
+- **Running the script safely.** I first assumed that running `UpdateRemoteModules.sh` with no arguments was safe. Reading the script showed that without `--help` it contacts GitHub over SSH and edits `Modules/Remote/*.cmake` in place. I ran it with `--help` only, and `git status --short` was empty before and after.
 - **Missing versions in my first draft.** My first report listed the OS and commit but not the shell or git versions, and `repro-check` failed it on `env-recorded`. I added them.
 - No installation problems. The setup script ran without errors.
 
@@ -212,29 +210,69 @@ Run from the repo root. `--help` is the only safe way to run this script. Withou
 
 **Analysis**
 
-[Your analysis of the root cause: what is causing the issue, traced
-to the files and functions involved.]
+ITK#796 asks for standard documentation in the `Utilities` scripts: a header comment and a `--help` message with NAME, SYNOPSIS, DESCRIPTION, OPTIONS, IMPLEMENTATION, EXAMPLES and SEE ALSO. I narrowed this to `Utilities/Maintenance/UpdateRemoteModules.sh`, one of the three scripts a maintainer suggested as starting points.
+
+In that script the documentation exists in two places, and both are thin:
+
+- **Header comment (lines 22-26):** two sentences after the license block, saying the script updates the git commit hashes of remote modules.
+- **`usage()` (lines 30-41):** prints a `Usage:` line plus the same text as one paragraph. This is all `--help` shows.
+
+None of the seven sections appear anywhere in the file. A `grep` for them finds nothing.
+
+The documentation is also incomplete and slightly misleading about the script's one option:
+
+- **`-ongreen` is never mentioned.** It's read at line 71, and the GitHub CI-status check (the `curl` call) only runs inside `if [ $ongreen -eq 1 ]` at line 109.
+- **The help text describes the wrong behavior.** It says the script updates modules "whose CI build status is successful," which is what `-ongreen` does, not what the script does by default.
+
+Nothing in the cause is a code bug. The text in the header and in `usage()` is what's missing and wrong. A reader would also have no warning that running the script without `--help` contacts GitHub over SSH and edits `Modules/Remote/*.cmake` in place.
+
 
 **Proposed Solution**
 
-[High-level description of your fix approach, and what you are
-deliberately NOT changing.]
+Rewrite the header comment and the text printed by `usage()` in `UpdateRemoteModules.sh`, using the issue's seven sections in the issue's order. The content will cover:
+
+- what the script does and what it changes (files edited in place, GitHub contacted over SSH)
+- the `-ongreen` option and what it changes
+- how the script works, including where it sits in the Release.md remote-module update procedure
+- examples
+- references to related files, such as `UpdateRequiredITKVersionInRemoteModules.sh` and Release.md
+
+Each section name goes in uppercase on its own line with its text indented beneath it, in the man-page style the issue links.
+
+***What I won't change:***
+
+- Any behavior of the script, only comments and the text `usage()` prints. That leaves `--help` exiting with status 1, the option loop breaking on the first argument, the unused `die()`, and the uninitialized `help` variable, all as they are.
+- The other scripts in `Utilities`.
+- Release.md.
+- The ITK Software Guide section the issue mentions.
+- Any automation that renders script docs to a web page.
+- The `*.remote.cmake` versus `*.cmake` wording, which I checked and found isn't a real gap.
+
+The issue covers every script, so my PR will reference it, not close it.
+
 
 **Implementation Plan**
 
-1. [Modify file X to do Y]
-2. [Add or change Z]
-3. [Update tests]
+1. Fetch upstream and branch off `upstream/main`.
+2. Read the header of `UpdateRequiredITKVersionInRemoteModules.sh` for local style, and read the whole of `UpdateRemoteModules.sh` so the IMPLEMENTATION and EXAMPLES sections describe what it actually does.
+3. Rewrite the header comment (lines 22-26) with the seven sections.
+4. Rewrite the text `usage()` prints (lines 30-41) to match, including `-ongreen`.
+5. Run `bash -n` on the script.
+6. Run `./Utilities/Maintenance/UpdateRemoteModules.sh --help`, the only safe invocation, as the first argument. Confirm `git status --short` shows no changes besides my edit.
+7. Grep the --help output, not just the file, for all seven section names. Also check that -ongreen appears in that output and that the ‘CI build status is successful’ sentence is gone or only describes what -ongreen does.
+8. Check `git diff` touches only comments and `usage()` text in this one file.
+9. Commit with a `DOC:` prefix and save the before and after output in `test_evidence.md`. This file won't be tracked and its contents will go into the PR description. Addiotnally, the `DOC:` commit will not have a co-authored by trailer. 
 
 [Record deviations here as they happen: what changed mid-build and
 why. A recorded deviation is honest work; silent drift is not.]
 
+
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: plan-check, run as `claude "plan-check: grade my plan in plan.md and draft comment in plan-comment.md for issue https://github.com/InsightSoftwareConsortium/ITK/issues/796"`.
+- What it produced: A verdict of accept, with all five required checks passing (diagnosis-grounded, bounded-scope, executable-by-a-stranger, test-decisive, comment-faithful). It checked my line numbers and the `-ongreen` claim against the script, and confirmed the `*.remote.cmake` call. It also listed four things to fix before building and some typos in my comment.
+- Difficulties: The skill's procedure.md reads the comment from comment.md, but my file is plan-comment.md, so it used mine. It also noted that nothing says what counts as repro evidence for a docs issue, since I never posted a repro comment.
+- What changed: I changed my test step to grep the `--help` output and check `-ongreen` and the CI-status sentence in it, because grepping the file would pass if only the header changed. I added a line saying the sections are formatted man-page style, kept test_evidence.md out of the commit, and left the Co-Authored-By trailer off my DOC: commit, as ITK's attribution.md requires. I also fixed the typos in my plan comment and reworded its last sentence to explain why the PR covers one script.
 
 ---
 
