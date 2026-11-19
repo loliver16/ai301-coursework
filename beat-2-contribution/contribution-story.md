@@ -66,10 +66,9 @@ I added rules for claims, questions, and pings to my voice guide and installed t
 
 I skipped the ship-gate tool and used my plan-check and pr-precheck skills as the checks before my PR instead. plan-check passed my plan for ITK#796, and pr-precheck returned accept on my package for PR #7207. It fought me at first: it refused to grade because scope.md pointed at the course's practice repo and house rules, and it failed my test evidence until I ensured it was thoroughly documented. What changed because of it is that I set the `Repo:` line to ITK, commented out the Path Review house rules that don't apply to ITK, and put labeled before and after outputs in test_evidence.md.
 
-**Unit 8: [one line on the tool work]**
+**Unit 12: Skipped creating the PR Monitor; instead, kept using pr-precheck and Claude chat on PR #7207**
 
-[2-4 sentences: the PR-monitor and your playbook. What it read, what it
-drafted, what you did with the draft.]
+I did not install or run the PR monitor or write a playbook, because my instructor said it was optional and I was short on time, so it drafted nothing for my PR. As of 11/18 the PR has no maintainer comments, only a passing CI run and the automated bot's 5/5, so there was nothing to reply to and no draft to send or reject. ITK asks docs-only PRs to wait at least one working day for review, so I'm holding off on any nudge until then. Nothing changed in my process because of the monitor; I'm relying on my earlier pr-precheck results and checking the PR page myself.
 
 ---
 
@@ -200,7 +199,7 @@ Run from the repo root. `--help` is the only safe way to run this script. Withou
 
 - Tool: repro-check, run as `claude "repro-check: grade my claim comment in claim-draft.md and my repro report in repro-draft.md for issue https://github.com/InsightSoftwareConsortium/ITK/issues/796"`.
 - What it produced: The first run failed `env-recorded` because I hadn't recorded the shell and git versions. After I added them, the second run passed all four required checks, and it verified my quoted lines and the `-ongreen` claim against the script at 772f60f.
-- Difficulties: I closed the terminal and lost the output, so I had to resume the session to recover it. Otherwise, no other difficulties were encountered and this process went relatively smoothly. While I didn't post the plan on the issue (because of unit 10 directions not too), I plan on building off of this reproduction report to create my plan. 
+- Difficulties: I closed the terminal and lost the output, so I had to resume the session to recover it. Otherwise, no other difficulties were encountered and this process went relatively smoothly. While I didn't post the plan on the issue (because unit 10 directions state not too), I plan on building off of this reproduction report to create my plan. 
 - What changed: I added the shell and git versions to the environment section, kept the plan out of the repro, and will save the output with `tee` next time.
 
 ---
@@ -262,10 +261,9 @@ The issue covers every script, so my PR will reference it, not close it.
 8. Check `git diff` touches only comments and `usage()` text in this one file.
 9. Commit with a `DOC:` prefix and save the before and after output in `test_evidence.md`. This file won't be tracked and its contents will go into the PR description. Addiotnally, the `DOC:` commit will not have a co-authored by trailer. 
 
-[Record deviations here as they happen: what changed mid-build and
-why. A recorded deviation is honest work; silent drift is not.]
-Deviations:
-- 11/18: An additional step I had to take before committing and pushing my changes was running the repo's checks: `pre-commit run --files Utilities/Maintenance/UpdateRemoteModules.sh` and `git prepush`. This required me to install pre-commit, then I ran each and all applicable hooks passed, signaling the changes were ready to be committed and pushed. 
+***Deviations:***
+- 11/18: An additional step I had to take before committing and pushing my changes was running the repo's checks: `pre-commit run --files Utilities/Maintenance/UpdateRemoteModules.sh` and `git prepush`. This required me to install pre-commit, then I ran each and all applicable hooks passed, signaling the changes were ready to be committed and pushed.
+- 11/18: I used pr-precheck to evaluate my pr draft after the commits were made but hadn't yet been pushed. To use this tool effetivly for this repo, I had to change the scope of pr-precheck to point to the ITK repo and ignore the house rules created specifically for previous Path Review work. 
 
 
 **Toolkit**
@@ -312,7 +310,7 @@ I did not run the full update, since it contacts GitHub over SSH and rewrites th
 **Toolkit**
 
 - Tool: pr-precheck
-- What it produced:A verdict on whether my test evidence is observable and thorough, not just a claim that tests pass. It first returned "unclear" when it couldn't find the commit and push pre checks ITK requires, then passed once the evidence was in place.
+- What it produced: A verdict on whether my test evidence is observable and thorough, not just a claim that tests pass. It first returned "unclear" when it couldn't find the commit and push pre checks ITK requires, then passed once the evidence was in place.
 - Difficulties: Originally, I had posted my test evidence in a file outside of ITK repo, so the tool failed due to insufficient testing. Also, when trying to run the commit pre check from ITK documentation, it was failing and required me to install pre-commit to get it to run properly. 
 - What changed: I installed pre-commit, ran it on the changed file, and put the before and after outputs, labeled, in this repo's test_evidence.md. The not-tested check passed on the next run.
 
@@ -372,7 +370,6 @@ Refs #796.
 **Maintainer Feedback:**
 
 - 11/18: No maintainer feedback yet. The automated PR bot gave my PR a 5/5 score, noting my changes are low impact and it looks safe to merge. 
-- [Date]: [how you addressed it]
 
 **Status:** Awaiting Review
 
@@ -393,16 +390,17 @@ Refs #796.
 
 **Technical Skills Gained**
 
-[What you learned technically, named concretely.]
+This issue introduced me to shell scripts and made me much more comfortable reading and understanding them. I worked out how UpdateRemoteModules.sh rewrites the GIT_TAG hashes in the Modules/Remote/*.remote.cmake files, how -ongreen adds a GitHub status check through curl, and why only the first argument is parsed. I also learned that an unquoted `cat << EOF` heredoc expands `$` and backticks, so writing usage() text means being careful about what's inside it. Working in the ITK repo, I learned about the importance of documentation to maintain consistency in such a large project, and from my end, I realized how important it is to take time to read the documentation before taking action. While AI could do a scan of the different documentation files, I found that AI doesn't always capture all of specifications in these docs, so reading it myself gave me a better understanding of what was expected. 
 
 **Challenges Overcome**
 
-[What was hard and how you solved it; point at the real events, the
-Toolkit blocks above are full of them.]
+One of the challenges I faced as I used the previously created claude skills to grade and check my work, is that the scope's and definitions were often narrow because they were created specifically for classwork and contributions. This required me to analyze these tools and reevaluate how narrow I wanted them to grade. For example, for the pr-precheck skill, I decided to widen the scope by commenting out the house rules created originally for classwork, because these no longer applicable or useful for the ITK repo. 
+
+Another challenge I faced was working to understand this script, so I could write effective documentation. I had no previous experience working with shell scripts before this so it took a dedicated effort to begin understanding the syntax and usage. Something that helped me better understand my chosen script better was using AI to walk me through it's functionality line-by-line, and also having it explain the role this script plays in the larger development process. Understanding its role and structure was crucial to my learning and allowed me to better document its behavior. 
 
 **What I'd Do Differently Next Time**
 
-[Reflection on your process.]
+Next time, I would dedicate more time to reading the projects contribution docs before writing anything so I have a better baseline understanding of the requirements, versus having to constantly reference and reread the documents throughout the process. Additionally, as I now have more experience understanding scripts, I would challenge myself next time to draft the documentation without AI help, to really grasp the shell behavior, then using AI to clean up this draft. 
 
 ---
 
@@ -415,3 +413,4 @@ Helpful Documentation:
 
 Other helpful resources:
 - The Maintainers original comments, which gave specifically detailed the 7 sections they wanted included in the documentation: https://github.com/InsightSoftwareConsortium/ITK/issues/796#issue-439051963
+- Contribution gudielines: from the Contribution site (https://docs.itk.org/en/latest/contributing/index.html), attribution.md, pull-requests.md, and git-commits.md.
