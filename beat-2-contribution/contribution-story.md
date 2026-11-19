@@ -11,7 +11,7 @@ files and no evidence uploads are part of Assignment 5.
 **Student:** Lauren Oliver
 **GitHub Username:** loliver16
 **Issue:** https://github.com/InsightSoftwareConsortium/ITK/issues/796
-**Pull Request:** [GitHub PR link, once opened]
+**Pull Request:** https://github.com/InsightSoftwareConsortium/ITK/pull/7207
 
 One repository, built across units 5 to 8, telling the whole story of your real
 contribution. Fill it as you work, not at the end — the sections below ask for evidence that
@@ -62,10 +62,9 @@ I built issue-scout with the strategy of prioritizing my backend experience and 
 
 I added rules for claims, questions, and pings to my voice guide and installed the hook that checks my comments before they post. Nothing broke: the guard log shows the wiring test was blocked as expected and my claim passed on its first check, though I haven't yet seen it stop a bad draft. My ITK memory file started from a Unit 9 assumption that running UpdateRemoteModules.sh with no arguments was safe. Reading the script showed it edits Modules/Remote files in place, so I changed the rule to `--help` only.
 
-**Unit 7: [one line on the tool work]**
+**Unit 11: Used plan-check and pr-precheck to plan, implement, and ship my changes**
 
-[2-4 sentences: the ship-gate and your gate manifest. What it produced
-on your real branch, what fought you, what changed because of it.]
+I skipped the ship-gate tool and used my plan-check and pr-precheck skills as the checks before my PR instead. plan-check passed my plan for ITK#796, and pr-precheck returned accept on my package for PR #7207. It fought me at first: it refused to grade because scope.md pointed at the course's practice repo and house rules, and it failed my test evidence until I ensured it was thoroughly documented. What changed because of it is that I set the `Repo:` line to ITK, commented out the Path Review house rules that don't apply to ITK, and put labeled before and after outputs in test_evidence.md.
 
 **Unit 8: [one line on the tool work]**
 
@@ -265,6 +264,8 @@ The issue covers every script, so my PR will reference it, not close it.
 
 [Record deviations here as they happen: what changed mid-build and
 why. A recorded deviation is honest work; silent drift is not.]
+Deviations:
+- 11/18: An additional step I had to take before committing and pushing my changes was running the repo's checks: `pre-commit run --files Utilities/Maintenance/UpdateRemoteModules.sh` and `git prepush`. This required me to install pre-commit, then I ran each and all applicable hooks passed, signaling the changes were ready to be committed and pushed. 
 
 
 **Toolkit**
@@ -278,65 +279,113 @@ why. A recorded deviation is honest work; silent drift is not.]
 
 ## Testing Strategy
 
-[What observable checks prove the fix: your reproduction steps re-run
-against the built change (before and after), and the repo's own test
-suite or checks with the outcome shown. "Tests pass" with nothing
-observable named is not a strategy.]
+The change only touches the header comment and the usage() text, so the
+checks prove two things: the help output and header now carry the
+requested sections, and the script's behavior is unchanged. All outputs
+are in the PR's collapsed "Test results" block.
+
+**Before the fix** (from my reproduction):
+- `UpdateRemoteModules.sh --help` printed the old short usage text, with
+  no NAME, SYNOPSIS, DESCRIPTION, OPTIONS, IMPLEMENTATION, EXAMPLES, or
+  SEE ALSO sections.
+- Grepping the script for those section names found nothing.
+- A grep for -ongreen found it only in the code (lines 71, 72, 75, 109,
+  138), with no description of what it does.
+
+**After the fix:**
+- `UpdateRemoteModules.sh --help` prints the full standardized text,
+  including the -ongreen description.
+- The same section grep now matches every section header in the script
+  header, and the -ongreen grep finds the option documented.
+- `bash -n` reports no syntax errors.
+- `git diff --stat` shows 117 insertions and 13 deletions, all in this one
+  file. `git diff --check` reports no whitespace problems.
+
+**Repo checks:**
+- `pre-commit run --files Utilities/Maintenance/UpdateRemoteModules.sh`
+  passed every hook that applies to the file.
+- `git prepush` accepted the single `DOC:` commit.
+- CI on PR #7207 passed.
+
+I did not run the full update, since it contacts GitHub over SSH and rewrites the remote module files. Because the changes only include comments and help text, `bash -n` and a matching `--help` run are the checks that the show the documentation effectively while leaving the functionality and remote modules untouched. 
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: pr-precheck
+- What it produced:A verdict on whether my test evidence is observable and thorough, not just a claim that tests pass. It first returned "unclear" when it couldn't find the commit and push pre checks ITK requires, then passed once the evidence was in place.
+- Difficulties: Originally, I had posted my test evidence in a file outside of ITK repo, so the tool failed due to insufficient testing. Also, when trying to run the commit pre check from ITK documentation, it was failing and required me to install pre-commit to get it to run properly. 
+- What changed: I installed pre-commit, ran it on the changed file, and put the before and after outputs, labeled, in this repo's test_evidence.md. The not-tested check passed on the next run.
 
 ---
 
 ## Implementation Notes
 
-[A running log, added to as you work. Date each entry. What you
-built, decisions you made when you made them, wrong turns included.]
+**11/09**
 
-**[Date]**
+Narrowed the scope from issue #796 ("Standardize documentation in
+Utilities scripts") to one file, Utilities/Maintenance/UpdateRemoteModules.sh.
+The change covers only the header comment and the usage() help text, with
+no behavior change. I wrote down what I would not change in plan.md so
+the PR stays reviewable. The maintainer's idea of rendering the docs on
+a web page is out of scope.
 
-[Entry]
+**11/16**
 
-**[Date]**
+Read the script before editing it, since I hadn't worked with shell scripts. The points that shaped the text: -ongreen is only read as the first argument and adds a GitHub commit-status check, so modules that aren't "success" are left unchanged and listed as failing. Without it, every module with a newer commit is updated. usage() is an unquoted heredoc, so `$` and backticks expand, and a line with only EOF would end it early. I kept that in mind while editing.
 
-[Entry]
+**11/17**
+
+Wrote the new header (NAME, SYNOPSIS, DESCRIPTION, OPTIONS, IMPLEMENTATION, EXAMPLES, SEE ALSO) and made usage() match it. Left several oddities alone on purpose, because fixing them would change behavior: --help exits with status 1, the option loop breaks on the first argument, die() is unused, and the help variable is uninitialized. Replaced the old five-line header and eight-line usage text.
+
+**11/18**
+
+Committed as "DOC: Standardize UpdateRemoteModules.sh header and help text". Ran into several things along the way. The first commit message was rejected, so I recovered it with git commit -e. pre-commit wasn't installed, so I installed it and re-ran the hooks.
+
+**11/18**
+
+pr-precheck wouldn't accept the package at first. Its Repo: line pointed at the course's practice repo, my test results were in another repo's test_evidence.md, and its house rules asked for a branch name format that ITK doesn't require. I fixed the Repo: line, moved the evidence, and commented out the Path Review section of scope.md since it doesn't apply to ITK. The final run returned accept.
+
+**11/18**
+
+Pushed the branch to my fork and opened PR #7207 against ITK. CI passed and I marked it ready for review. The automated PR bot scored it 5/5 and called it low impact.
+
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: Claude (chat), plus the pr-precheck output from the PR step
+- What it produced: Plain-language explanations of the shell script and first drafts of the commit body and wording, which I then edited.
+- Difficulties: I had no scripting experience before this and I didn't have a script to reference the documentation structure I was implementing. I used resources the maintainer recommended and claude to create and implement the new format. 
+- What changed: I rewrote the text in my own words. I checked each claim in the header and usage() against the script's real output before committing. 
 
 ---
 
 ## Pull Request
 
-**PR Link:** [GitHub PR URL when opened]
+**PR Link:** https://github.com/InsightSoftwareConsortium/ITK/pull/7207
 
-**PR Description:** [what the PR says; much of the content above
-adapts into it]
+**PR Description:** 
+Document UpdateRemoteModules.sh with the header and --help sections requested in #796 (NAME through SEE ALSO), including the -ongreen option. Only comments and help text change; script behavior is unchanged.
+This covers only this script, so it references the issue and doesn't close it.
+Refs #796.
+
 
 **Maintainer Feedback:**
 
-- [Date]: [feedback received, or "none yet"; silence is a normal
-  state and costs you nothing]
+- 11/18: No maintainer feedback yet. The automated PR bot gave my PR a 5/5 score, noting my changes are low impact and it looks safe to merge. 
 - [Date]: [how you addressed it]
 
-**Status:** [Awaiting review / Iterating / Merged / Closed. The
-status is a fact you record, never a grade: the PR is graded as
-opened.]
+**Status:** Awaiting Review
 
 **Toolkit**
 
-- Tool:
-- What it produced:
-- Difficulties:
-- What changed:
+- Tool: pr-precheck (I skipped the optional ship-gate and used pr-precheck
+  as my pre-PR check.)
+- What it produced:A pass/fail verdict on my PR package (plan, diff,
+  description, and test evidence) against four checks: silent-drift,
+  not-tested, unreviewable, and standards-wall. The final run returned
+  accept, and I opened the PR after that.
+- Difficulties: The first difficulty I encountered was that my pr-precheck tool was   still scoped to only focus on the Path Review repo (from the previous contribution), so it would not run for this new contribution. After changing the tool's scope to my issues repo (ITK), it then ran but rejected my pr because the nottested check was unclear: "no pre-commit or git prepush output appears in test_evidence.md or pr_draft.md." While I had run these check pre commit and push, I did not document them so I went back to do this. Once this check passed, the standards-wall check then failed because the house rules in the tool's scope went against my issue's branch naming conventions, creating a conflict. I decided to comment out the house rules in SCOPE.md because they were centered around the previous contribution for Path Review and weren't applicable for this issue. Finally, I ran the tool once more and everything passed.
+- What changed: I set the `Repo:` line in scope.md to InsightSoftwareConsortium/ITK and commented out the Path Review section, since those rules don't apply to ITK. I graded against ITK's own PR template, commit rules, and pr audit check instead. I installed pre-commit, ran it on the changed file, and put the real output in test_evidence.md. Then, I re-ran pr-precheck and it accepted my pr.
 
 ---
 
@@ -359,10 +408,10 @@ Toolkit blocks above are full of them.]
 
 ## Resources Used
 
-[What actually helped, not a reading list. List things this story
-already shows you using: the doc you followed to set the environment
-up, the thread that explained the bug, the person who answered you.
-One real entry beats ten plausible ones.]
+Helpful Documentation:
+- https://linux.die.net/man/7/groff_man
+- https://stackoverflow.com/questions/14008125/shell-script-common-template
+- https://public.dhe.ibm.com/software/dw/aix/au-kornshellscripting/au-kornshellscripting-pdf.pdf
 
-- [Link to documentation that helped]
-- [Discussion, issue, or post that helped]
+Other helpful resources:
+- The Maintainers original comments, which gave specifically detailed the 7 sections they wanted included in the documentation: https://github.com/InsightSoftwareConsortium/ITK/issues/796#issue-439051963
