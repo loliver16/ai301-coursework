@@ -31,21 +31,7 @@ each header. A leftover bracketed prompt reads as unfilled.
 
 ## Featured Tools
 
-Three or four tools, presented in depth. Open with a few sentences
-on why you chose these.
-
-Full credit asks the featured set to show real change: **at least two** of your featured
-entries should show a tool that visibly moved through use. An honest entry for a tool that
-barely changed — saying so, dating what did happen, and giving the reason — earns the solid
-middle tier and never fails you.
-
-Each tool's honest limit is not written here. It goes in the tool-limits list at the
-bottom of this page, one line per featured tool, so that the limits sit together and can be
-read as a set.
-
 I chose to discuss issue scout, voice guard, and pr precheck because these tools were the most effective in helping me work through this contribution process, from claim to pr. All three of these tools played a significant role in ensuring I stayed on track and was properly prepared before submitting anything. 
-
-Copy the entry shape below once per featured tool and fill it there.
 
 **Issue Scout**
 
@@ -59,7 +45,9 @@ The original limitation of issue-select was that it had no ability to search for
 
 **Evidence:**
 
-Before I changed the scope fits a newcomer role, issue #796 passed the scan:   {
+Before I changed the scope fits a newcomer role, issue #796 passed the scan:   
+```
+{
     "item": "https://github.com/InsightSoftwareConsortium/ITK/issues/796",
     "checks": [
       {"name": "The maintainer is alive", "grade": "pass", "evidence": "2026-11-08 hjmjohnson: 'Merge pull request #7136' on default branch"},
@@ -69,8 +57,10 @@ Before I changed the scope fits a newcomer role, issue #796 passed the scan:   {
     ],
     "verdict": "accept"
   }
+```
 
 However, once changing this row to scope feasible, this issue was rejected because it's scope was too large to be feasible:
+```
   {
     "item": "https://github.com/InsightSoftwareConsortium/ITK/issues/796",
     "checks": [
@@ -81,6 +71,7 @@ However, once changing this row to scope feasible, this issue was rejected becau
     ],
     "verdict": "reject"
   }
+```
 
 This was a good change because the grader is right, this issue has a very large scope as it references all scripts within two different folder (atleast 20 scripts), which is not a feasible task to claim unless the scope was narrowed, which is what I ended up doing with the maintainers advice. 
 
@@ -114,24 +105,15 @@ While I didn't run into a submission where voice-guard rejected an issue, this h
 
 **pr-precheck**
 
-**What it is, and the judgment hole I wrote:** [what the tool does,
-and the part of it that is your judgment: the rubric, strategy,
-guide, manifest, or playbook you wrote.]
+**What it is, and the judgment hole I wrote:**
 
 pr precheck grades a pr package using a rubric with these categories: silent drift, standards-wall, not-tested, and un-reviewable. The purpose of this grading is to ensure the pr draft complies with repo and maintainer expectation, then ensures it can be easily reviewed. Defining these rubric categories required me to step into the maintainer's shoes and understand a baseline of what is important and helpful in a pr draft. Even though maintainers may have differing opinions on the details, they often want to easily see what steps were taken, the evidence to support that, and any other information about the change in a concise, readable format. The standards wall check was especially helpful for me as I worked on my contribution because due to working in a large repo, it was easy to miss some of the requirements/standards defined, so pr precheck catching these gaps prevented my PR from being delayed unnecisarily, 
 
-**How it evolved, dated:** [the changes that made it yours, each
-with its date and the friction that drove it; your weekly Toolkit
-entries are the source.]
+**How it evolved, dated:**
 
 The friction related to this tool began on 11/18 when I first ran it in my pr draft and it rejected because it couldn't find my complete testing documentation. In this case, I had run the tests as a part of the commit process but hadn't saved the result or run the pre push test, so I'm grateful this was caught for me. After fixing this, another problem popped up with the standards wall that prevent my pr from passing. This created significantly more friction because despite my pr having all of it's necessary components (in relation to standards + expectations), it was still failing because of the scope still referencing the path review repo and rules. This revealed that while my pr-precheck is documented as grading all pr packages, I had not changed the scope to reflect this and allow a wider diversity of issues + prs to be reviewed. I widened the scope by changing the `Repo:` line to ITK and commenting out the path review house rule. After this, the pr precheck ran successfully and I was able to push my changes for review! While my PR hasn't been reviewed by a maintainer yet, the automatic pr bot did review it and scored it 5/5, proving that my work was thorough. 
 
-**Evidence:** [show, don't claim: an output excerpt, a before/after
-pair, or a dated commit reference, inline here. Draw it from your real
-term work where you can - a catch this tool actually made, a
-before/after from your own repo or PR - which is graded separately from
-whether an artifact is present at all. A short, telling excerpt beats a
-pasted transcript.]
+**Evidence:**
 
 Run 3 shows the failure that resulted from the limited scope of pr-precheck to path review: 
 
@@ -181,53 +163,34 @@ I reviewed the house rules and determined they weren't fit for work outside of t
 
 ## Inventory
 
-One line each for the rest of the toolkit: what it is and where it
-stands (one bullet per tool; a compact sentence or two is fine).
-
-- [Tool name: one line.]
+- repro-check: graded my reproduction report with my claim comment. It failed the first run on 11/17 due to missing shell and git versions, but passed the second time once added.
+- plan-check: grades my plan and plan comment to ensure it is bounded, easy to follow, and testable. It also compares to the reproduction report, which is how I used it to confirm my exact steps (on 11/17), before implementing changes. 
 
 ## The Arc
 
-The story of the toolkit in order: friction, change, result, dated.
-Your weekly Toolkit entries are the source; read your own record and
-tell it oldest first.
-
-Write one block per beat, in the shape below, oldest first. Keep all four labels on every
-beat, each on its own line. The `Result:` line is what the beat was for: it says what
-happened *after* the change, which is not the same sentence as the change itself. If a beat
-never reached a result, write `Result: none` — an honest beat that did not land still counts
-fully as a beat.
-
-Full credit asks for **at least two** beats whose `Result:` line names something that
-actually happened afterwards. A beat about something that did not work counts fully as a
-beat, and when the work happened never moves this score.
-
 **Beat 1**
-Date: [a date, or a month and year]
-Friction: [what was going wrong, and how you noticed]
-Change: [what you changed because of it]
-Result: [what happened afterwards, or the word none]
+Date: 11/7/26
+Friction: I noticed when running issue-scout, issues with multiple subtasks were being selected, which weren't actually feasible for a single PR.
+Change: I added a line in the scope fits a newcomer section of my rubric that prevented umbrella issue from being accepted. 
+Result: Before testing it live, I divided to run a canary test using the old eval modules, and I found two issues, 04 and 06, were flipped from accept to reject, even though they were actually still scoped well and acceptable. Thus, I decided to revert my change in the rubric, and noted that this could be an issue to look for in accepted issues going forward. 
 
 **Beat 2**
-Date: [a date, or a month and year]
-Friction: [what was going wrong, and how you noticed]
-Change: [what you changed because of it]
-Result: [what happened afterwards, or the word none]
+Date: 11/18
+Friction: pr-precheck was rejecting my pr package because standards wall failing due to existing scope requirements relating to Path Review work.
+Change: I changed the repo block to point to my issue's repo, and I commented out the Path Review house rules.
+Result: After these changes, the standards wall check passed and my pr package was accepted. 
 
-Copy the beat shape above for as many beats as your term had.
 
 ## Limitations and What's Next
 
-What the toolkit as a whole still does not do, and what you would
-build or change next. Write this section last; it will be better
-after the rest.
+Right now, my tool kit does a great job walking me through the contribution process, but doesn't contain a tool that assists after PR creation. This tool would have been PR monitor but I opted out of creating this tool, so I'm aware it is now a weak point for my process. However, this would definetly be my next step to ensure I have a thorough contribution process. Another issue stems from the scope issue in pr-check in that each tool was originally created for Path Review issue specifically, so there is likely more that I need to change so the scope is more generalized and not biased towards the path review standards. Finally, one last limit is that the tools didn't check if my added documentation content matched the scripts behavior, which stems from  the tools being focused on details and not functionality. 
 
-[The honest limits, and what comes next, in your own sentences.]
+Moving foward, my next steps would be to create the PR Monitor tool and update the scopes to become more general. By doing this, I feel that the process will become more automated , giving me more time to learn and grow.  
 
-**Tool limits.** One line per featured tool, in the same order as the entries above, naming
-where that tool still stops or what it still gets wrong. A small honest limit is full credit;
-"none really" is not a limit. If a tool genuinely has none you can name, write `none` after
-its label rather than deleting the line.
+**Tool limits.** 
 
-issue-scout: [where this tool still stops, in plain words, or the word none]
-[tool name]: [where this tool still stops, in plain words, or the word none]
+issue-scout: the language filter in the issue scout scripts only checks the repo, but not the specific issue to issues may be returned that don't meet the language specification. 
+
+voice guard: The log (as seen printed in the feature tool section) only shows a draft pass or stop, but doesn't give any details to what rules are broken/preventing passing and what went right. Also, I did not get to test voice-guard on a bad draft, so I'm still not fully sure of its limits and extend of stops versus passes.
+
+pr-precheck: While I commented out the path review house rules, they can still be found and uncommented in scope.md. Additionally, it compares diff results and test outputs, but it doesn't compare documentation to the functionality, which is essential to ensuring the documentation is complete and accurate. 
